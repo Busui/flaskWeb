@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from 'bootstrap/form.html' import render_form %}
+
+{% block app_content %}
+
+<div class="container bg-white mt-2 pt-2">
+    <span class="custom-font">
+        发私信给{{ recipient }}
+    </span>
+    <div class="row">
+        <div class="col-12">
+            {{ render_form(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

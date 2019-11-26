@@ -1,0 +1,299 @@
+/* overwrite the default */
+* {
+    box-sizing: border-box;
+}
+
+/* reset CSS */
+table {
+    font-size: 100%;
+}
+
+/* end reset CSS */
+body {
+    font-family: "lucida grande", "lucida sans unicode", lucida, helvetica, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+    font-size: 18px;
+    background-color: #f8f9fa!important;
+}
+
+H1 {
+    margin-bottom: 0px;
+    padding: 8px 0px 3px 6px;
+    border-bottom: 2px LightGrey solid;
+    /* border-left: 6px solid yellow; */
+    width: 98%;
+    line-height: 150%;
+    color: #666666;
+    display: block;
+    font-size: 1.5em;
+    margin-block-start: 0.83em;
+    margin-block-end: 0em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+}
+
+H2 {
+    margin-bottom: 0px;
+    padding: 3px;
+    border-bottom: 1px LightGrey solid;
+    border-left: 4px solid purple;
+    width: 98%;
+    line-height: 150%;
+    color: #666666;
+    display: block;
+    font-size: 1.3em;
+    margin-block-start: 1.6em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+}
+
+H3 {
+    border-left: 4px solid purple;
+    border-bottom: 1px LightGrey solid;
+    padding-left: 5px;
+    width: 98%;
+    line-height: 150%;
+    color: #666666;
+    display: block;
+    font-size: 1.15em;
+    margin-block-start: 2em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+}
+
+H4 {
+    border-left: 4px solid purple;
+    border-bottom: 1px LightGrey solid;
+    padding-left: 5px;
+    width: 98%;
+    line-height: 150%;
+    color: #666666;
+    display: block;
+    font-size: 1em;
+    margin-block-start: 1.8em;
+    margin-block-end: 1.2em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+}
+
+.for-a a{
+    font-weight:bold; color:#000; 
+    text-decoration:underline
+}
+
+img.displayed {
+    text-align: center;
+    display: block;
+}
+
+/* my custom class */
+a.custom-a {
+    text-decoration: none;
+    border-bottom: 1px #FF9000 solid;
+}
+
+a.custom-a:hover {
+    text-decoration: none;
+    border-bottom: 2px #FF9000 solid;
+}
+
+.custom-border-bottom {
+    border-bottom: 3px solid #FFC75F !important;
+}
+
+.custom-active {
+    background-color: #FFC75F;
+}
+
+.custom-border-top {
+    border-top: 10px solid #f8f9fa;
+}
+
+.custom-span-meta {
+    font-size: 0.8em;
+    color: #5a5f63;
+}
+
+.custom-text-muted {
+    color: #5a5f63;
+}
+
+/* for ali .icon */
+.icon {
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.15em;
+    fill: currentColor;
+    overflow: hidden;
+  }
+
+div>p>img {
+    max-width: 80%;
+    height: auto;
+}
+
+article>div>img {
+    display: block;
+    border-radius: 6px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    max-width: 85%;
+}
+
+p > img {
+    display: block;
+    box-shadow: 0 0 4px #4f5522;
+    border-radius: 6px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    -webkit-box-shadow: 0 0 4px #4f5522;
+    max-width: 70%;
+}
+
+p>code {
+    background-color: rgb(245, 239, 212);
+    color: #000;
+    border-radius: 4px;
+    padding: 1px 1px;
+    margin: 0px 1px;
+}
+
+li>code {
+    background-color: #845ec2;
+    color: #eee;
+    border-radius: 2px;
+    padding: 1px 1px;
+    margin: 0px 1px;
+}
+
+/* for 分隔栏 */
+.hr-box {
+    display: flex;
+    width: 100%;
+    height: 8px;
+    margin: 5px 0px 5px 0px;
+}
+
+.hr-box-sm {
+    height: 8px;
+    margin: 0;
+    flex-grow: 1;
+    transition: all .8s ease-in-out;
+    cursor: pointer;
+}
+
+/* Growing the width of box, when hover using flex-grow property */
+.hr-box-sm:hover {
+    flex-grow: 12;
+}
+
+.hr-red {
+    background-color: #FF5852;
+}
+
+.hr-orange {
+    background-color: #FF9000;
+}
+
+.hr-yellow {
+    background-color: #FFD300;
+}
+
+.hr-green {
+    background-color: #3DCD49;
+}
+
+.hr-blue {
+    background-color: #0089D7;
+}
+
+.hr-purple {
+    background-color: #9E44C4;
+}
+
+.gradient-box {
+    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.33, rgb(173, 46, 14)), color-stop(0.67, rgb(255, 251, 1)));
+    background-image: -moz-linear-gradient(center bottom, rgb(173, 46, 14) 33%, rgb(255, 251, 1) 67%);
+    padding: 0px 0px 0px 4px;
+}
+.gradient-box > div {
+    background: #fff; 
+}
+
+.custom-link-color {
+    color: #000;
+}
+
+.custom-sumary-title {
+    font-size: 1.2em;
+}
+
+.custom-post-meta {
+    font-size: 0.8em;
+}
+.custom-border {
+    border-left: 6px solid;
+    border-right: 6px solid;
+}
+
+.custom-font {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.custom-border-hover:hover {
+    /* background-color: #FF9000; */
+    font-weight: bolder;
+    background-color: #FBD786;
+    /* border-top: 3px solid;
+    border-bottom: 3px solid; */
+}
+
+/* color dict which used by data folder */
+.border-custom-color0 {
+    border-color: #f5af19;
+}
+
+.border-custom-color1 {
+    border-color: #c471ed;  /* fallback for old browsers */
+}
+
+.border-custom-color2 {
+    border-color: #ee9ca7;
+}
+
+.border-custom-color3 {
+    border-color: #2193b0;
+}
+
+.border-custom-color4 {
+    border-color: #C6FFDD;  /* fallback for old browsers */
+}
+
+.border-custom-color5 {
+    border-color: #FBD786;
+}
+
+.border-custom-color6 {
+    border-color: #f7797d;
+}
+
+.comment-body {
+    margin-left: 70px;
+    overflow: auto;
+}
+
+.comment-thumbnail {
+    width: 60px;
+    height: 60px;
+    position: absolute;
+}

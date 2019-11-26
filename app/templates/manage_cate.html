@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% from 'bootstrap/form.html' import render_form %}
+
+{% set active_page = "Categories" %}
+
+{% block app_content %}
+{% for message in get_flashed_messages() %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>{{ message }}</strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endfor %}
+<div class="p-2 mt-3 bg-white" style="min-height: 600px;">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+        <a class="nav-link active" id="add_category-tab" data-toggle="tab" href="#add_category" role="tab" aria-controls="add_category" aria-selected="true">增加分类</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" id="rename_category-tab" data-toggle="tab" href="#rename_category" role="tab" aria-controls="rename_category" aria-selected="false">分类重命名</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" id="delete_category-tab" data-toggle="tab" href="#delete_category" role="tab" aria-controls="delete_category" aria-selected="false">删除分类</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="add_category" role="tabpanel" aria-labelledby="add_category-tab">
+            {% include 'add_category.html' %}
+        </div>
+        <div class="tab-pane fade" id="rename_category" role="tabpanel" aria-labelledby="rename_category-tab">
+            {% include 'rename_category.html' %}
+        </div>
+        <div class="tab-pane fade" id="delete_category" role="tabpanel" aria-labelledby="delete_category-tab">
+            {% include 'delete_category.html' %}
+        </div>
+    </div>
+</div>
+{% endblock app_content %}

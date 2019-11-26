@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/form.html' import render_form %}
+{% set active_page = "login" %}
+
+{% block app_content %}
+<div class="container bg-white mt-2">
+    <h1>登录</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-7 py-4">
+            {{ render_form(form) }}
+        </div>
+        <div class="col-7 text-right">
+            <p>新用户？ <a href="{{ url_for('auth.register') }}">点击注册</a></p>
+            <p>
+                忘记密码？
+                <a href="{{ url_for('auth.reset_password_request') }}">点击重置</a>
+            </p>
+        </div>
+    </div>
+    <br>
+    
+</div>
+{% endblock %}

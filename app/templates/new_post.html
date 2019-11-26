@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% from 'bootstrap/form.html' import render_form %}
+{% set active_page = "New" %}
+
+{% block app_content %}
+<div class="container-fluid bg-white mt-3">
+    {{ render_form(form=form, enctype='multipart/form-data', extra_classes='p-3') }}
+</div>
+{% endblock app_content %}
+
+{% block scripts %}
+{{ super() }}
+{{ pagedown.include_pagedown() }}
+<script>
+    $('#flask-pagedown-body').on('click',function() {
+        $('#flask-pagedown-body-preview').addClass('border border-success p-2 my-2');
+        $('.flask-pagedown').addClass('flask-pagedown-attr');
+        $('#flask-pagedown-body').addClass('h-100')
+    });
+</script>
+{% endblock scripts%}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% set active_page = "Categories" %}
+
+
+{% block app_content %}
+<div class="row justify-content-center my-2 pb-4 bg-white mx-0" style="min-height: 60vh;">
+    <div class="col-10 bg-light mt-3 position-relative">
+        {% for category in categories %}
+        <div class="px-2 py-1 text-left custom-border border-custom-color{{ loop.index0 }} custom-border-hover mt-2 position-static" style="width: 100%;transform: rotate(0);"> 
+            <a class="custom-link-color stretched-link" href="{{ url_for('main.get_posts_by_category_name', category_name=category.category_name)}}">{{ category.category_name }}</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="col-10 my-3 text-center"><a href="{{url_for('main.manage_category')}}" class="btn btn-warning" btn-lg active" role="button" aria-pressed="true">管理分类</a></div>
+</div>
+{% endblock app_content %}

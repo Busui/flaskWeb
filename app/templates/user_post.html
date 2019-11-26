@@ -1,0 +1,15 @@
+<li class="list-group-item">
+    <div class="d-flex justify-content-between">
+        <span><a href="{{ url_for('main.show_post', id=post.id)}}">{{ post.title }}</a> {%if post.is_draft %}<span class="badge badge-dark">草稿</span>{% endif %}</span>
+        {% if current_user == post.author %}
+        <div>
+            <span class="pl-2">
+                <a href="{{ url_for('main.delete_post', id=post.id)}}">删除</a>
+            </span>
+            <span class="pl-2">
+                <a href="{{ url_for('main.edit_post', id=post.id)}}">编辑</a>
+            </span>
+        </div>
+        {% endif %}
+    </div>
+</li>

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% from 'bootstrap/form.html' import render_form %}
+{% set active_page = "Index" %}
+
+{% block app_content %}
+<main class="container-fluid px-0 bg-white">
+    {% if posts is not none %}
+    <section>
+        {% for post in posts %}
+        <article>
+            {% include '_post.html' %}
+        </article>
+        {% endfor %}
+    </section>
+    <nav class="row m-5">
+        <div class="col-6">
+            <a class="btn btn-warning" href="{{ prev_url or '#' }}" role="button" {% if not prev_url %}
+                style="pointer-events: none; background-color: #f5e3ae;" aria-disabled="true" {% endif %}><span
+                    aria-hidden="true">&larr;</span>上一页</a>
+        </div>
+        <div class="col-6 text-right">
+            <a class="btn btn-warning" href="{{ next_url or '#' }}" role="button" {% if not next_url %}
+                style="pointer-events: none; background-color: #f5e3ae;" aria-disabled="true" {% endif %}>下一页<span
+                    aria-hidden="true">&rarr;</span></a>
+        </div>
+    </nav>
+    {% endif %}
+</main>
+{% endblock %}

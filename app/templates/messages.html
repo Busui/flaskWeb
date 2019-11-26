@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% set active_page = "Messages" %}
+
+{% block app_content %}
+<div class="container bg-white mt-3">
+    <span class="custom-font">私信:</span>
+    <div class="mt-2" style="min-height: 400px;">
+        <ul class="list-group list-group-flush">
+            {% for message in messages %}
+            {% include '_message.html' %}
+            {% endfor %}
+        </ul>
+    </div>
+    <nav class="row mx-4">
+        <div class="col-6">
+            <a class="btn btn-warning" href="{{ prev_url or '#' }}" role="button" {% if not prev_url %}
+                style="pointer-events: none; background-color: #f5e3ae;" aria-disabled="true" {% endif %}><span
+                    aria-hidden="true">&larr;</span>上一页</a>
+        </div>
+        <div class="col-6 text-right">
+            <a class="btn btn-warning" href="{{ next_url or '#' }}" role="button" {% if not next_url %}
+                style="pointer-events: none; background-color: #f5e3ae;" aria-disabled="true" {% endif %}>下一页<span
+                    aria-hidden="true">&rarr;</span></a>
+        </div>
+    </nav>
+</div>
+
+{% endblock %}

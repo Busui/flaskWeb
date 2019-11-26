@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/form.html' import render_form %}
+
+
+{% block app_content %}
+<div class="container bg-white mt-2">
+    <h1>回复给{{ comment_user }}</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-7 py-4">
+            {{ render_form(form) }}
+        </div>
+    </div>
+    <br>
+    
+</div>
+{% endblock %}

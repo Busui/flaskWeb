@@ -1,0 +1,9 @@
+<li class="list-group-item">
+    <div class="row">
+        <div class="col-10"><h5 class="mb-1">{{ message.author.username }}:</h5>
+            <p class="mb-1">{{ message.body }}</small></div>
+        
+        <div class="col-12 text-right"><small>{{ moment(message.timestamp).format('L') }}</small></div>
+        
+    </div>
+</li>

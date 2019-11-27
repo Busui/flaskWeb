@@ -158,6 +158,7 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(140))
     is_reply = db.Column(db.Boolean, default=False)
+    reply_to = db.Column(db.Integer, default=0)
     has_reply = db.Column(db.Boolean, default=False)
     reply = db.Column(db.Integer, default=0)
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
@@ -165,7 +166,15 @@ class Comment(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
     def get_reply(self):
-        return Comment.query.get_or_404(self.reply)
+        replys = []
+        one_reply = Comment.query.get(self.reply)
+        while one_reply:
+            replys.append(one_reply)
+            one_reply = Comment.query.get(one_reply.reply)
+        return replys
+    
+    def get_reply_to(self):
+        return User.query.get(self.reply_to).username
 
     def __repr__(self):
         return '<Comment {}>'.format(self.body)

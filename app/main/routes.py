@@ -2,7 +2,6 @@ from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, g, \
     jsonify, current_app, send_from_directory
 from flask_login import current_user, login_required
-from flask_babel import _, get_locale
 from guess_language import guess_language
 from app import db
 from app.main.forms import EditProfileForm, PostForm, MessageForm, \
@@ -24,7 +23,6 @@ def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
-    g.locale = str(get_locale())
 
 
 @bp.route('/static/photos/<filename>', methods=['GET'])
@@ -43,7 +41,7 @@ def index():
         if posts.has_next else None
     prev_url = url_for('main.index', page=posts.prev_num) \
         if posts.has_prev else None
-    return render_template('index.html', title=_('Home'),
+    return render_template('index.html', title='主页',
                            posts=posts.items, next_url=next_url,
                            prev_url=prev_url)
 
@@ -88,12 +86,6 @@ def other_user(username):
                            next_url=next_url, prev_url=prev_url)
 
 
-@bp.route('/user/<username>/popup')
-@login_required
-def user_popup(username):
-    user = User.query.filter_by(username=username).first_or_404()
-    return render_template('user_popup.html', user=user)
-
 
 @bp.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
@@ -103,12 +95,21 @@ def edit_profile():
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
         db.session.commit()
-        flash(_('Your changes have been saved.'))
+        f = form.image.data
+        if f:
+            filename = secure_filename(form.username.data+'.png')
+            url = os.path.join(
+                current_app.root_path, 'static', 'photos', filename
+            )
+            f.save(url)
+        else:
+            flash('头像更换失败')
+        flash('资料更改成功')
         return redirect(url_for('main.edit_profile'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
-    return render_template('edit_profile.html', title=_('Edit Profile'),
+    return render_template('edit_profile.html', title='Edit Profile',
                            form=form)
 
 
@@ -117,14 +118,14 @@ def edit_profile():
 def follow(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
-        flash(_('User %(username)s not found.', username=username))
+        flash('找不到 %(username)s哦', username=username)
         return redirect(url_for('main.index'))
     if user == current_user:
-        flash(_('You cannot follow yourself!'))
+        flash('你不能关注你自己')
         return redirect(url_for('main.user', username=username))
     current_user.follow(user)
     db.session.commit()
-    flash(_('You are following %(username)s!', username=username))
+    flash('成功关注%(username)s!', username=username)
     return redirect(url_for('main.user', username=username))
 
 
@@ -133,14 +134,14 @@ def follow(username):
 def unfollow(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
-        flash(_('User %(username)s not found.', username=username))
+        flash('没找到%(username)s哦', username=username)
         return redirect(url_for('main.index'))
     if user == current_user:
-        flash(_('You cannot unfollow yourself!'))
+        flash('额，你不能取关你自己')
         return redirect(url_for('main.user', username=username))
     current_user.unfollow(user)
     db.session.commit()
-    flash(_('You are not following %(username)s.', username=username))
+    flash('取关%(username)s成功！', username=username)
     return redirect(url_for('main.user', username=username))
 
 
@@ -156,9 +157,9 @@ def send_message(recipient):
         db.session.add(msg)
         user.add_notification('unread_message_count', user.new_messages())
         db.session.commit()
-        flash(_('Your message has been sent.'))
+        flash('你的私信已经成功发送')
         return redirect(url_for('main.user', username=recipient))
-    return render_template('send_message.html', title=_('Send Message'),
+    return render_template('send_message.html', title='Send Message',
                            form=form, recipient=recipient)
 
 
@@ -365,9 +366,10 @@ def show_post(id):
             db.session.add(comment)
             db.session.commit()
             flash('评论成功')
-        return render_template('show_post.html', post=post, form=form, comments=comments, COMMENT_COLORS=COMMENT_COLORS)
+            return redirect(url_for('main.show_post', id=id))
+        return render_template('show_post.html', post=post, form=form, comments=comments)
     flash("登录后可评论文章")
-    return render_template('show_post.html', post=post, comments=comments, COMMENT_COLORS=COMMENT_COLORS)
+    return render_template('show_post.html', post=post, comments=comments)
 
 
 @bp.route('/post/reply/<int:id>', methods=('GET', 'POST'))
@@ -376,7 +378,7 @@ def reply(id):
     comment = Comment.query.get_or_404(id)
     form = ReplyForm()
     if form.validate_on_submit():
-        reply = Comment(user=current_user, post=comment.post, body=form.reply.data, is_reply=True)
+        reply = Comment(user=current_user, post=comment.post, body=form.reply.data, is_reply=True, reply_to=comment.user.id)
         db.session.add(reply)
         db.session.commit()
         comment.reply = reply.id
@@ -388,6 +390,19 @@ def reply(id):
     return render_template('reply.html', form=form, comment_user=comment.user.username)
     
 
+@bp.route('/post/delete_comment/<int:id>', methods=['GET'])
+@login_required
+def delete_comment(id):
+    comment = Comment.query.get_or_404(id)
+    post_id = comment.post.id
+    if current_user == comment.user:
+        if comment.has_reply:
+            for com in comment.get_reply():
+                db.session.delete(com)
+        db.session.delete(comment)
+        db.session.commit()
+        flash('删除评论成功！')
+    return redirect(url_for('main.show_post', id=post_id))
 
 
 @bp.route('/post/delete/<int:id>', methods=['GET', 'POST'])

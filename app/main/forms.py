@@ -1,5 +1,4 @@
 from flask import request, flash
-from flask_babel import _, lazy_gettext as _l
 from wtforms import PasswordField, SubmitField, StringField, BooleanField, SelectField, TextAreaField
 from wtforms import ValidationError
 from wtforms.validators import DataRequired, Email, Length, regexp, ValidationError
@@ -14,10 +13,11 @@ from app.models import User, Category
 
 
 class EditProfileForm(FlaskForm):
-    username = StringField(_l('用户名'), validators=[DataRequired()])
-    about_me = TextAreaField(_l('关于我'),
+    username = StringField('用户名', validators=[DataRequired()])
+    image = FileField('头像', validators=[FileRequired(), FileAllowed(['png'], 'png Images only!')])
+    about_me = TextAreaField('关于我',
                              validators=[Length(min=0, max=140)])
-    submit = SubmitField(_l('确认'))
+    submit = SubmitField('确认')
 
     def __init__(self, original_username, *args, **kwargs):
         super(EditProfileForm, self).__init__(*args, **kwargs)
@@ -27,12 +27,12 @@ class EditProfileForm(FlaskForm):
         if username.data != self.original_username:
             user = User.query.filter_by(username=self.username.data).first()
             if user is not None:
-                raise ValidationError(_('Please use a different username.'))
+                raise ValidationError('请使用不同的用户名')
 
 class MessageForm(FlaskForm):
-    message = TextAreaField(_l('私信'), validators=[
+    message = TextAreaField('私信', validators=[
         DataRequired(), Length(min=1, max=140)])
-    submit = SubmitField(_l('提交'))
+    submit = SubmitField('提交')
 
 
 class CommentForm(FlaskForm):

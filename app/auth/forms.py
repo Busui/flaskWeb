@@ -1,25 +1,26 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
-from flask_babel import _, lazy_gettext as _l
 from app.models import User
 
 
 class LoginForm(FlaskForm):
-    username = StringField(_l('用户名'), validators=[DataRequired()])
-    password = PasswordField(_l('密码'), validators=[DataRequired()])
-    remember_me = BooleanField(_l('记住我'))
-    submit = SubmitField(_l('登入'))
+    username = StringField('用户名', validators=[DataRequired()])
+    password = PasswordField('密码', validators=[DataRequired()])
+    remember_me = BooleanField('记住我')
+    submit = SubmitField('登入')
 
 
 class RegistrationForm(FlaskForm):
-    username = StringField(_l('用户名'), validators=[DataRequired()])
-    email = StringField(_l('邮箱'), validators=[DataRequired(), Email()])
-    password = PasswordField(_l('密码'), validators=[DataRequired()])
+    username = StringField('用户名', validators=[DataRequired()])
+    image = FileField('头像', validators=[FileRequired(), FileAllowed(['png'], 'png Images only!')])
+    email = StringField('邮箱', validators=[DataRequired(), Email()])
+    password = PasswordField('密码', validators=[DataRequired()])
     password2 = PasswordField(
         '重复输入密码', validators=[DataRequired(),
                                            EqualTo('password')])
-    submit = SubmitField(_l('注册'))
+    submit = SubmitField('注册')
 
     def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()
@@ -38,7 +39,7 @@ class ResetPasswordRequestForm(FlaskForm):
 
 
 class ResetPasswordForm(FlaskForm):
-    password = PasswordField(_l('密码'), validators=[DataRequired()])
+    password = PasswordField('密码', validators=[DataRequired()])
     password2 = PasswordField(
         '重复输入密码', validators=[DataRequired(),
                                            EqualTo('password')])

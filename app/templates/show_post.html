@@ -78,7 +78,12 @@
           <span class="badge badge-success">作者</span>
           {% endif %}
           <span class="badge badge-dark">{{ moment(comment.timestamp).format('LLLL') }}</span>
-          <a href="{{ url_for('main.reply', id=comment.id)}}" class="badge badge-primary float-right">回复</a>
+          {% if not comment.has_reply %}
+          <a href="{{ url_for('main.reply', id=comment.id)}}" class="badge badge-primary float-right mx-1 mt-1">回复</a>
+          {% endif %}
+          {% if current_user == comment.user %}
+          <a href="{{ url_for('main.delete_comment', id=comment.id)}}" class="badge badge-danger float-right mt-1 mx-1">删除</a>
+          {% endif %}
         </p>
       </div>
       <div class="alert {% if comment.user == post.author %} alert-success {% else %} alert-warning {% endif %} comment-body" role="alert">
@@ -86,8 +91,8 @@
       </div>
     </li>
     {% if comment.has_reply %}
-    {% set reply = comment.get_reply() %}
-    <li style="list-style: none;" class="ml-5 pl-1 border rounded shadow">
+    {% for reply in comment.get_reply() %}
+    <li style="list-style: none;" class="ml-5 pl-1 border rounded shadow mt-2">
         <div class="comment-thumbnail mt-1">
           <img src="{{ url_for('main.uploaded_file', filename=reply.user.avatar()) }}" alt="" style="width: 50px;height: 50px;" class="rounded">
         </div>
@@ -98,15 +103,21 @@
             <span class="badge badge-success">作者</span>
             {% endif %}
             <span class="badge badge-dark">{{ moment(reply.timestamp).format('LLLL') }}</span>
-            <a href="{{ url_for('main.reply', id=reply.id)}}" class="badge badge-primary float-right">回复</a>
+            {% if not reply.has_reply %}
+            <a href="{{ url_for('main.reply', id=reply.id)}}" class="badge badge-primary float-right mx-1 mt-1">回复</a>
+            {% endif %}
+            {% if current_user == reply.user %}
+          <a href="{{ url_for('main.delete_comment', id=reply.id)}}" class="badge badge-danger float-right mt-1 mx-1">删除</a>
+          {% endif %}
           </p>
         </div>
         <div class="alert {% if reply.user == post.author %} alert-success {% else %} alert-warning {% endif %} comment-body" role="alert">
-          @{{ comment.user.username }}：{{ reply.body }}
+          @{{ reply.get_reply_to() }}：{{ reply.body }}
         </div>
       </li>
-      <hr>
+    {% endfor %}
     {% endif %}
+    <hr>
     {% endfor %}
     </ul>
 </main>

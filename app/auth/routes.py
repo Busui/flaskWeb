@@ -1,10 +1,10 @@
 from flask import render_template, redirect, url_for, flash, request, current_app
 from werkzeug.urls import url_parse
-from flask_login import login_user, logout_user, current_user
+from flask_login import login_user, logout_user, current_user, login_required
 from app import db
 from app.auth import bp
 from app.auth.forms import LoginForm, RegistrationForm, \
-    ResetPasswordRequestForm, ResetPasswordForm
+    ResetPasswordRequestForm, ResetPasswordForm, UserManageForm
 from app.models import User
 from app.auth.email import send_password_reset_email
 from werkzeug.utils import secure_filename
@@ -87,3 +87,24 @@ def reset_password(token):
         flash('密码重置成功')
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password.html', form=form)
+
+
+@bp.route('/manage_user', methods=['GET'])
+@login_required
+def manage_user():
+    users = User.query.all()
+    return render_template('auth/manage_user.html', users=users, title='管理用户')
+
+
+@bp.route('/admin_reset_password/<username>', methods=['GET', 'POST'])
+@login_required
+def admin_reset_password(username):
+    form = UserManageForm()
+    user = User.query.filter_by(username=username).first_or_404()
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        db.session.commit()
+        flash('密码重置成功')
+        return redirect('auth/manage_user')
+    return render_template('auth/admin_reset_password.html', form=form, username=username)
+

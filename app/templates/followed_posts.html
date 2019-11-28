@@ -1,10 +1,8 @@
 {% extends "base.html" %}
 {% from 'bootstrap/form.html' import render_form %}
-{% set active_page = "Index" %}
+{% set active_page = "Followed_posts" %}
 
 {% block app_content %}
-{% if category_name %} <div class="bg-white"><span class="badge badge-warning p-1 mt-0">分类“{{category_name}}”下的文章：</span></div>{% endif %}
-{% if tag_name %} <div class="bg-white"><span class="badge badge-dark p-1 mt-0">标签“{{tag_name}}”下的文章：</span></div>{% endif %}
 <main class="container-fluid px-0 bg-white">
     {% if posts %}
     <section>
@@ -27,8 +25,8 @@
         </div>
     </nav>
     {% else %}
-    <div class="text-muted text-center mt-2 p-5" style="height: 500px;">
-        当前页面没有任何文章哦...
+    <div class="text-muted text-center mt-2 p-5" style="height: 600px;">
+        您关注的人没有任何发布文章哦...
     </div>
     {% endif %}
 </main>

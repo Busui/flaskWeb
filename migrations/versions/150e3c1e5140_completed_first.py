@@ -1,8 +1,8 @@
-"""users table
+"""completed first
 
-Revision ID: a45615c6680a
+Revision ID: 150e3c1e5140
 Revises: 
-Create Date: 2019-11-21 18:00:18.356492
+Create Date: 2019-11-28 17:26:41.081328
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'a45615c6680a'
+revision = '150e3c1e5140'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -101,6 +101,10 @@ def upgrade():
     op.create_table('comment',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('body', sa.String(length=140), nullable=True),
+    sa.Column('is_reply', sa.Boolean(), nullable=True),
+    sa.Column('reply_to', sa.Integer(), nullable=True),
+    sa.Column('has_reply', sa.Boolean(), nullable=True),
+    sa.Column('reply', sa.Integer(), nullable=True),
     sa.Column('post_id', sa.Integer(), nullable=True),
     sa.Column('author_id', sa.Integer(), nullable=True),
     sa.Column('timestamp', sa.DateTime(), nullable=True),

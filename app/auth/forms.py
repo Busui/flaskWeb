@@ -11,6 +11,11 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField('记住我')
     submit = SubmitField('登入')
 
+class UserManageForm(FlaskForm):
+    password = PasswordField('密码', validators=[DataRequired()])
+    submit = SubmitField('重置密码')
+    
+    
 
 class RegistrationForm(FlaskForm):
     username = StringField('用户名', validators=[DataRequired()])

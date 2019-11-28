@@ -35,13 +35,28 @@ def uploaded_file(filename):
 @bp.route('/index', methods=['GET'])
 def index():
     page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
+    posts = Post.query.filter_by(is_draft=False).order_by(Post.timestamp.desc()).paginate(
         page, current_app.config['POSTS_PER_PAGE'], False)
     next_url = url_for('main.index', page=posts.next_num) \
         if posts.has_next else None
     prev_url = url_for('main.index', page=posts.prev_num) \
         if posts.has_prev else None
     return render_template('index.html', title='主页',
+                           posts=posts.items, next_url=next_url,
+                           prev_url=prev_url)
+
+
+@bp.route('/followed_posts', methods=['GET'])
+@login_required
+def followed_posts():
+    page = request.args.get('page', 1, type=int)
+    posts = current_user._get_current_object().followed_posts().paginate(
+        page, current_app.config['POSTS_PER_PAGE'], False)
+    next_url = url_for('main.followed_posts', page=posts.next_num) \
+        if posts.has_next else None
+    prev_url = url_for('main.followed_posts', page=posts.prev_num) \
+        if posts.has_prev else None
+    return render_template('followed_posts.html', title='我的关注',
                            posts=posts.items, next_url=next_url,
                            prev_url=prev_url)
 
@@ -69,7 +84,7 @@ def user(username):
     prev_url = url_for('main.user', username=user.username,
                        page=posts.prev_num) if posts.has_prev else None
     return render_template('user.html', user=user, posts=posts.items,
-                           next_url=next_url, prev_url=prev_url)
+                           next_url=next_url, prev_url=prev_url, ADMIN=current_app.config['FLASK_ADMIN'])
 
 
 @bp.route('/other_user/<username>')
@@ -118,14 +133,14 @@ def edit_profile():
 def follow(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
-        flash('找不到 %(username)s哦', username=username)
+        flash('找不到'+ username)
         return redirect(url_for('main.index'))
     if user == current_user:
         flash('你不能关注你自己')
         return redirect(url_for('main.user', username=username))
     current_user.follow(user)
     db.session.commit()
-    flash('成功关注%(username)s!', username=username)
+    flash('成功关注'+ username)
     return redirect(url_for('main.user', username=username))
 
 
@@ -134,14 +149,14 @@ def follow(username):
 def unfollow(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
-        flash('没找到%(username)s哦', username=username)
+        flash('找不到'+ username + '哦')
         return redirect(url_for('main.index'))
     if user == current_user:
         flash('额，你不能取关你自己')
         return redirect(url_for('main.user', username=username))
     current_user.unfollow(user)
     db.session.commit()
-    flash('取关%(username)s成功！', username=username)
+    flash('取关' + username + '成功！')
     return redirect(url_for('main.user', username=username))
 
 
@@ -217,7 +232,7 @@ def get_posts_by_category_name(category_name):
         if (len(posts) == 0):
             flash("当前分类下没有文章哦")
             return render_template('index.html', posts=None)
-        return render_template('index.html', posts=posts, pagination=pagination)
+        return render_template('index.html', posts=posts, pagination=pagination, category_name=category_name)
 
 
 @bp.route('/post/new', methods=['GET', 'POST'])
@@ -278,17 +293,18 @@ def new_post():
 def edit_post(id):
     user = current_user._get_current_object()
     post = Post.query.get(id)
+    old_cate = post.category
+    old_tags = post.tags[:]
     if post is None:
         abort(403)
     form = Edit_PostForm()
-    old_cate = post.category
-    old_tags = post.tags
     form.categories.choices = [(cate.id, cate.category_name) for cate in Category.query.order_by('category_name')]
     if form.validate_on_submit():
         title = form.title.data
         body = form.body.data
         post_description = form.post_description.data
         if form.publish.data:
+            print("Hete1")
             f = form.image.data
             if f:
                 filename = secure_filename(f.filename)
@@ -298,11 +314,12 @@ def edit_post(id):
                 f.save(url)
                 image_url = filename
             else:
-                image_url = ''
+                image_url = post.image_url
             category = Category.query.get(form.categories.data)
             if category is not None:
                 category.post_count += 1
             tags = form.tags.data
+            print(tags)
             # 序列化tags
             tag_list = []
             if tags is not None:
@@ -323,13 +340,16 @@ def edit_post(id):
             post.category = category
             post.tags = tag_list
             post.years = get_years()
-            image_url = image_url
+            post.image_url = image_url
             if old_cate and old_cate.post_count != 0:
                 old_cate.post_count -= 1
             for tag in old_tags:
+                print(tag)
+                print(tag.post_count)
                 if tag.post_count:
                     tag.post_count -= 1
                 if tag.post_count == 0:
+                    print("hete")
                     db.session.delete(tag)
         else:
             post.author = user
@@ -344,10 +364,11 @@ def edit_post(id):
             db.session.rollback()
             flash('发布失败')
             return redirect(url_for('main.new_post'))
-        flash('发布成功')
-        return redirect(url_for('bp.show_post', id=post.id))
+        flash('文章修改成功')
+        return redirect(url_for('main.show_post', id=post.id))
     
     form.title.data = post.title
+    form.tags.data = ",".join([t.tag_name for t in old_tags])
     form.post_description.data = post.post_description
     if post.is_draft:
         form.body.data = post.body_draft
@@ -358,7 +379,7 @@ def edit_post(id):
 @bp.route('/post/<int:id>', methods=['GET', 'POST'])
 def show_post(id):
     post = Post.query.get_or_404(id)
-    comments = Comment.query.filter_by(post_id=id, is_reply=False)
+    comments = Comment.query.filter_by(post_id=id, is_reply=False).all()
     if not current_user.is_anonymous:
         form = CommentForm()
         if form.validate_on_submit():
@@ -503,5 +524,5 @@ def get_post_by_tag(name):
     posts = pagination.items
     categories = Category.query.all()
     tags = Tag.query.all()
-    return render_template('index.html', posts=posts, pagination=pagination)
+    return render_template('index.html', posts=posts, pagination=pagination, tag_name=name)
 

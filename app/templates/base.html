@@ -13,9 +13,20 @@
     <link rel="stylesheet" href="{{url_for('static', filename='css/github.css')}}" type="text/css">
     {% endblock %}
 
+    <!-- third-generation iPad with high-resolution Retina display: -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{url_for('static', filename='favicon144.png')}}">
+    <!-- iPhone with high-resolution Retina display: -->
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{url_for('static', filename='favicon114.png')}}">
+    <!-- first- and second-generation iPad: -->
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{url_for('static', filename='favicon72.png')}}">
+    <!-- non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
+    <link rel="apple-touch-icon-precomposed" href="{{url_for('static', filename='favicon57.png')}}">
+    <!-- basic favicon -->
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon32.png')}}">
+
     <title>
         {% block title %}
-        {% if title %}{{ title }} - Wuqingcong{% else %}欢迎来到180809{% endif %}
+        {% if title %}{{ title }} - webhomework{% else %}欢迎来到180809{% endif %}
         {% endblock %}
     </title>
     {% endblock %}
@@ -31,7 +42,7 @@
     <div class="container">
       {% block top_content %}
         <header>
-            <nav class="navbar navbar-expand-lg navbar-light bg-white">
+            <nav class="navbar navbar-expand-lg navbar-light bg-white mb-2">
                 <a class="navbar-brand" href="#">
                     <img src="{{url_for('static', filename='adminImg.gif')}}" width="200" height="200" alt="">
                 </a>
@@ -52,13 +63,14 @@
                         {% if current_user.is_anonymous %}
                             <li class="nav-item ml-3 {% if 'login' == active_page %} custom-active {% endif %}"><a class="nav-link" href="{{ url_for('auth.login') }}">登录</a></li>
                         {% else %}
+                        <li class="nav-item {% if 'Followed_posts' == active_page %} custom-active {% endif %}"><a class="nav-link" href="{{ url_for('main.followed_posts') }}">我的关注</a></li>
                             <li class="nav-item {% if 'Profile' == active_page %} custom-active {% endif %}"><a class="nav-link" href="{{ url_for('main.user', username=current_user.username) }}">关于</a></li>
                             <li class="nav-item {% if 'Messages' == active_page %} custom-active {% endif %}">
                                 <a class="nav-link" href="{{ url_for('main.messages') }}">消息
                                     {% set new_messages = current_user.new_messages() %}
                                     <span id="message_count" class="badge" 
                                             style="{% if new_messages %}visibility:visible; background-color:#FFC75F;
-                                                                {% else %}visibility:hidden{% endif %};">
+                                                                {% else %}visibility:hidden; background-color:#000;{% endif %};">
                                         {{ new_messages }}
                                     </span>
                                 </a>
@@ -106,6 +118,7 @@
             function set_message_count(n) {
                 $('#message_count').text(n);
                 $('#message_count').css('visibility', n ? 'visible' : 'hidden');
+                $('#message_count').css('background-color', n ? '#FFC75F' : '#000');
             }
             {% if current_user.is_authenticated %}
             $(function() {

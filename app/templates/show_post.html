@@ -65,6 +65,7 @@
     <hr>
     <span>当前评论：</span>
     
+    {% if comments %}
     <ul>
     {% for comment in comments %}
     <li style="list-style: none;" class="my-4">
@@ -120,5 +121,10 @@
     <hr>
     {% endfor %}
     </ul>
+    {% else %}
+    <div class="text-muted text-center pt-3 pb-5" style="height: 50px;">
+        当前文章没有任何评论哦...
+    </div>
+    {% endif %}
 </main>
 {% endblock app_content %}

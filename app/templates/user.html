@@ -13,7 +13,7 @@
                 {% endif %}
                 <p><span style="font-weight: bolder;">关注：</span>{{ user.followed.count() }}&nbsp;&nbsp;<span style="font-weight: bolder;">粉丝：</span>{{ user.followers.count() }}</p>
                 {% if user == current_user %}
-                <p><a href="{{ url_for('main.edit_profile') }}">修改资料</a></p>
+                <p><a href="{{ url_for('main.edit_profile') }}" class="badge badge-warning p-1 mx-1">修改资料</a>{% if current_user.username == ADMIN %}<a href="{{ url_for('auth.manage_user')}}" class="badge badge-warning p-1 mx-1">管理用户</a>{% endif %}</p>
                 {% elif not current_user.is_following(user) %}
                 <p><a href="{{ url_for('main.follow', username=user.username) }}">关注</a></p>
                 {% else %}
@@ -27,20 +27,20 @@
     </table>
     <section class="px-2">
         <section class="py-3"><span class="custom-font">{{ user.username }}的所有文章:</span></section>
-        {% if posts is not none %}
         <ul class="list-group list-group-flush">
         {% for post in posts %}
             {% include 'user_post.html' %}
         {% endfor %}
         </ul>
-        {% else %}
-        <div class="text-center">
+        {% if not posts %}
+        <div class="text-center text-muted pb-5 mb-5">
             {{ user.username }}没有发布任何文章哦！
         </div>
         {% endif %}
 
     </section>
     
+    {% if posts %}
     <nav class="row mx-4">
         <div class="col-6">
                 <a class="btn btn-warning" href="{{ prev_url or '#' }}" role="button" {% if not prev_url %} style="pointer-events: none; background-color: #f5e3ae;" aria-disabled="true"{% endif %}><span aria-hidden="true">&larr;</span>上一页</a>
@@ -49,5 +49,6 @@
                 <a class="btn btn-warning" href="{{ next_url or '#' }}" role="button" {% if not next_url %} style="pointer-events: none; background-color: #f5e3ae;" aria-disabled="true"{% endif %}>下一页<span aria-hidden="true">&rarr;</span></a>
         </div>
     </nav>
+    {% endif %}
 </div>
 {% endblock %}

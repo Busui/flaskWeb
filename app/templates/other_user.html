@@ -31,13 +31,16 @@
     </table>
     <section class="px-2">
         <section class="py-3"><span class="custom-font">{{ user.username }}的所有文章:</span></section>
+        {% if posts %}
         <ul class="list-group list-group-flush">
         {% for post in posts %}
             {% include 'user_post.html' %}
         {% endfor %}
         </ul>
+        {% endif %}
     </section>
     
+    {% if posts %}
     <nav class="row mx-4">
         <div class="col-6">
                 <a class="btn btn-warning" href="{{ prev_url or '#' }}" role="button" {% if not prev_url %} style="pointer-events: none; background-color: #f5e3ae;" aria-disabled="true"{% endif %}><span aria-hidden="true">&larr;</span>上一页</a>
@@ -46,6 +49,11 @@
                 <a class="btn btn-warning" href="{{ next_url or '#' }}" role="button" {% if not next_url %} style="pointer-events: none; background-color: #f5e3ae;" aria-disabled="true"{% endif %}>下一页<span aria-hidden="true">&rarr;</span></a>
         </div>
     </nav>
+    {% else %}
+    <div class="text-muted text-center mt-2 p-5" style="height: 500px;">
+        当前页面没有任何文章哦...
+    </div>
+    {% endif %}
 </div>
 </div>
 {% endblock %}

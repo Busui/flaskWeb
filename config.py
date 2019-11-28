@@ -19,6 +19,7 @@ class Config(object):
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     POSTS_PER_PAGE = 3
+    FLASK_ADMIN = os.environ.get('FLASK_ADMIN') or "wuqingcong"
 
 
 COLORS = ['#19CAAD', '#D6D5B7', '#8CC7B5', '#D1BA74', '#A0EEE1', '#E6CEAC', '#BEE7E9', '#ECAD9E', '#BEEDC7', '#F4606C']

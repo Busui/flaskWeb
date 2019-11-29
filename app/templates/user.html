@@ -6,7 +6,7 @@
         <tr>
             <td width="256px"><img src="{{ url_for('main.uploaded_file', filename=user.avatar()) }}" style="width: 250px;height: 250px;"></td>
             <td>
-                <p><span class="custom-font">用户： {{ user.username }}</span></p>
+                <p><span class="custom-font">用户： {{ user.username }}{% if user.username == config.FLASK_ADMIN %}<span class="badge badge-pill badge-warning ml-1">站长</span>{% endif %}</span></p>
                 {% if user.about_me %} <p><span style="font-weight: bolder;">签名：</span>{{ user.about_me }}</p>{% endif %}
                 {% if user.last_seen %}
                 <p><span style="font-weight: bolder;">最后登录时间：</span>{{ moment(user.last_seen).format('LLL') }}</p>

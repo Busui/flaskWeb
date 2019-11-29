@@ -6,7 +6,7 @@
 <div class="bg-white mt-2">
     <table class="table table-hover">
         <tr>
-            <td width="256px"><img src="{{ url_for('main.uploaded_file', filename=user.avatar()) }}"></td>
+            <td width="256px"><img src="{{ url_for('main.uploaded_file', filename=user.avatar()) }}" style="width: 250px;height: 250px;"></td>
             <td>
                 <p><span class="custom-font">用户： {{ user.username }}</span></p>
                 {% if user.about_me %} <p><span style="font-weight: bolder;">签名：</span>{{ user.about_me }}</p>{% endif %}

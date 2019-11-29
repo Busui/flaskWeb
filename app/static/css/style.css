@@ -110,8 +110,8 @@ a.custom-a:hover {
     background-color: #FFC75F;
 }
 
-.custom-border-top {
-    border-top: 10px solid #f8f9fa;
+.custom-border-bottom-to-post {
+    border-bottom: 10px solid #f8f9fa;
 }
 
 .custom-span-meta {

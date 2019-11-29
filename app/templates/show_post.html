@@ -70,11 +70,16 @@
     {% for comment in comments %}
     <li style="list-style: none;" class="my-4">
       <div class="comment-thumbnail mt-1">
-        <img src="{{ url_for('main.uploaded_file', filename=comment.user.avatar()) }}" alt="" style="width: 50px;height: 50px;" class="rounded">
+        <a href="{{ url_for('main.user', username=comment.user.username)}}">
+          <img src="{{ url_for('main.uploaded_file', filename=comment.user.avatar()) }}" alt="" style="width: 50px;height: 50px;" class="rounded">
+        </a>
       </div>
       <div class="comment-body">
         <p>
           <span class="badge badge-warning mt-0">{{ comment.user.username }}</span>
+          {% if comment.user.username == config.FLASK_ADMIN %}
+            <span class="badge badge-danger">站长</span>
+          {% endif %}
           {% if comment.user == post.author %}
           <span class="badge badge-success">作者</span>
           {% endif %}
@@ -95,11 +100,16 @@
     {% for reply in comment.get_reply() %}
     <li style="list-style: none;" class="ml-5 pl-1 border rounded shadow mt-2">
         <div class="comment-thumbnail mt-1">
-          <img src="{{ url_for('main.uploaded_file', filename=reply.user.avatar()) }}" alt="" style="width: 50px;height: 50px;" class="rounded">
+          <a href="{{ url_for('main.user', username=reply.user.username)}}">
+            <img src="{{ url_for('main.uploaded_file', filename=reply.user.avatar()) }}" alt="" style="width: 50px;height: 50px;" class="rounded">
+          </a>
         </div>
         <div class="comment-body">
           <p>
             <span class="badge badge-warning mt-0">{{ reply.user.username }}</span>
+            {% if reply.user.username == config.FLASK_ADMIN %}
+            <span class="badge badge-danger">站长</span>
+            {% endif %}
             {% if reply.user == post.author %}
             <span class="badge badge-success">作者</span>
             {% endif %}

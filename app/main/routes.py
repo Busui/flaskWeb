@@ -234,7 +234,6 @@ def get_posts_by_category_name(category_name):
             return render_template('index.html', posts=None)
         return render_template('index.html', posts=posts, pagination=pagination, category_name=category_name)
 
-
 @bp.route('/post/new', methods=['GET', 'POST'])
 @login_required
 def new_post():
@@ -245,37 +244,38 @@ def new_post():
         title = form.title.data
         body = form.body.data
         post_description = form.post_description.data
+        f = form.image.data
+        if f:
+            filename = secure_filename(f.filename)
+            url = os.path.join(
+                current_app.root_path, 'static', 'photos', filename
+            )
+            f.save(url)
+            image_url = filename
+        else:
+            image_url = ''
+        category = Category.query.get(form.categories.data)
+        if category is not None:
+            category.post_count += 1
+        tags = form.tags.data
+        # 序列化tags
+        tag_list = []
+        if tags is not None:
+            for tag in tags.split(','):
+                tag_in = Tag.query.filter_by(tag_name=tag).first()
+                if tag_in:
+                    tag_in.post_count += 1
+                    tag_list.append(tag_in)
+                else:
+                    new_tag = Tag(tag_name=tag, post_count=1)
+                    db.session.add(new_tag)
+                    tag_list.append(new_tag)
         if form.publish.data:
-            f = form.image.data
-            if f:
-                filename = secure_filename(f.filename)
-                url = os.path.join(
-                    current_app.root_path, 'static', 'photos', filename
-                )
-                f.save(url)
-                image_url = filename
-            else:
-                image_url = ''
-            category = Category.query.get(form.categories.data)
-            if category is not None:
-                category.post_count += 1
-            tags = form.tags.data
-            # 序列化tags
-            tag_list = []
-            if tags is not None:
-                for tag in tags.split(','):
-                    tag_in = Tag.query.filter_by(tag_name=tag).first()
-                    if tag_in:
-                        tag_in.post_count += 1
-                        tag_list.append(tag_in)
-                    else:
-                        new_tag = Tag(tag_name=tag, post_count=1)
-                        db.session.add(new_tag)
-                        tag_list.append(new_tag)
             post = Post(title=title, body=body, author=user, post_description=post_description,
                     category=category, tags=tag_list, years=get_years(), image_url=image_url)
         else:
-            post = Post(title=title, body_draft=body, body=body, author=user, post_description=post_description, is_draft=True)
+            post = Post(title=title, body_draft=body, body=body, author=user, post_description=post_description, is_draft=True,
+            category=category, tags=tag_list, years=get_years(), image_url=image_url)
         db.session.add(post)
         try:
             db.session.commit()
@@ -283,7 +283,10 @@ def new_post():
             db.session.rollback()
             flash('发布失败')
             return redirect(url_for('main.new_post'))
-        flash('发布成功')
+        if form.publish.data:
+            flash("发表成功")
+        else:
+            flash("存为草稿成功")
         return redirect(url_for('main.index', id=post.id))
     return render_template('new_post.html', form=form)
 
@@ -364,7 +367,10 @@ def edit_post(id):
             db.session.rollback()
             flash('发布失败')
             return redirect(url_for('main.new_post'))
-        flash('文章修改成功')
+        if form.publish.data:
+            flash("文章修改成功")
+        else:
+            flash("存为草稿成功")
         return redirect(url_for('main.show_post', id=post.id))
     
     form.title.data = post.title
@@ -375,6 +381,9 @@ def edit_post(id):
     else:
         form.body.data = post.body
     return render_template('edit_post.html', form=form)
+
+
+
 
 @bp.route('/post/<int:id>', methods=['GET', 'POST'])
 def show_post(id):
